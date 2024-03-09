@@ -3,6 +3,7 @@ const Accident = require('../model/accident');
 const User = require('../model/User');
 const SiteInvestigation = require('../model/siteInvestigation');
 const { severityCalculator } = require('../utils/severityCalculator');
+const { Analysis } = require('../utils/analysisUtil')
 const Loc = require('../model/location');
 
 
@@ -53,7 +54,7 @@ exports.accidentSubmit = async (req, res) => {
             roadChainage: form.roadChainage,
             typeOfRoadSurface: form.typeOfRoadSurface,
             accidentSpot: form.accidentSpot,
-            location:{
+            location: {
                 type: "Point",
                 coordinates: [form.longitude, form.latitude]
             },
@@ -90,11 +91,32 @@ exports.SiteInvestigationSubmit = async (req, res) => {
         if (!user) {
             return res.status(401).json({ message: "Unauthorized", status: 401 });
         }
-        const siteInvestigation = new SiteInvestigation(req.body);
+        const siteInvestigation = new SiteInvestigation({
+            siteReference: req.body.siteReference,
+            state: req.body.state,
+            roadNo: req.body.roadNo,
+            locationDescription: req.body.locationDescription,
+            policeStation: req.body.policeStation,
+            landmarks: req.body.landmarks,
+            blackspotId: req.body.blackspotId,
+            location: {
+                type: "Point",
+                coordinates: [req.body.gpsCoordinates.longitude, req.body.gpsCoordinates.latitude],
+            },
+            blackspotType: req.body.blackspotType,
+            district: req.body.district,
+            chainage_from: req.body.chainage_from,
+            chainage_to: req.body.chainage_to,
+            site_images: req.body.site_images,
+            comments:req.body.comments ,
+            isQuest: req.body.isQuest,
+            isQuestOperational: req.body.isQuestOperational,
+            commentsOperational: req.body.commentsOperational,
+        });
         await siteInvestigation.save();
         res.status(200).json({ message: "Form Submitted Successfully", status: 200 });
     } catch (err) {
-        // console.error(err);
+        console.error(err);
         res.status(500).json({ message: err.message });
     }
 }
@@ -115,6 +137,53 @@ exports.getAccidents = async (req, res) => {
         res.status(200).json({ message: locations, status: 200 });
     } catch (err) {
         // console.error(err);
+        res.status(500).json({ message: err.message });
+    }
+}
+
+exports.getNearLocations = async (req, res) => {
+    try {
+        const { lat, lng } = req.params;
+        const locations = await Accident.find({
+            location: {
+                $near: {
+                    $geometry: { type: "Point", coordinates: [parseFloat(lng), parseFloat(lat)] },
+                    $maxDistance: 500
+                }
+            }
+        });
+        const investigations = await SiteInvestigation.find({
+            location: {
+                $near: {
+                    $geometry: { type: "Point", coordinates: [parseFloat(lng), parseFloat(lat)] },
+                    $maxDistance: 500
+                }
+            }
+        });
+        res.status(200).json({ message: locations, investigations: investigations, status: 200 });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: err.message });
+    }
+}
+exports.getAnalysis = async (req, res) => {
+    try {
+        const { lat, lng } = req.params;
+        console.log(parseFloat(lng), parseFloat(lat))
+        const locations = await Accident.find({
+            location: {
+                $near: {
+                    $geometry: { type: "Point", coordinates: [parseFloat(lng), parseFloat(lat)] },
+                    $maxDistance: 500
+                }
+            }
+        });
+
+        const analysis = await Analysis(locations)
+        res.status(200).json({ message: analysis, status: 200 });
+    }
+    catch (err) {
+        console.log(err)
         res.status(500).json({ message: err.message });
     }
 }

@@ -27,7 +27,7 @@ const accidentSchema = new mongoose.Schema({
   ongoingRoadWorks: String,
   roadName: String,
   roadType: String,
-  physicalDividerPresent: Boolean,
+  physicalDividerPresent: String,
   roadChainage: String,
   typeOfRoadSurface: String,
   accidentSpot: String,
@@ -66,6 +66,5 @@ accidentSchema.pre("save",async function(next){
     next(error);
   }
 })
-module.exports = mongoose.model('Accident', accidentSchema);
-
+accidentSchema.index({ location: "2dsphere" });
 module.exports = mongoose.model('Accident', accidentSchema);
