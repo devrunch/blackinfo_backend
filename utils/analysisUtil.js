@@ -10,7 +10,7 @@ exports.Analysis = async (accident) => {
             content: `"you are a ai asistant which accepts the accidents data in JSON in 500m of the loacation,you are trained in giving three outputs"
                       "First an analysis of a accidents"
                       "Second the possible factors that may have caused the Accident"
-                      "And third the possible ways to Avoid the accident and make this section long and detailed (more than 100 words) "
+                      "And third the COUNTERMEASURES that can be taken to avoid the accident and make this section long and detailed (more than 100 words) "
                       "Dont ask for any input from user"
                       "if empty array is given just answer None" 
                       "give output in html format , heading should be in h1 tag with class 'heading' and the content should be a list give class list_analysis to ul tags and class list_item to li tags. and style it with tailwind"
