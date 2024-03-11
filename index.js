@@ -58,7 +58,7 @@ app.post('/upload/xlsx', upload.single('file'), (req, res) => {
                 accidentSpot: val[' Accident Spot'],
                 location: {
                     type: "Point",
-                    coordinates: [val[' GPS Location Latitude Longitude'], val['latitude']]
+                    coordinates: [val['Longitude'], val['latitude']]
                 },
                 typeOfPropertyDamage: val[' Accident Spot'],
                 vehicles: [
