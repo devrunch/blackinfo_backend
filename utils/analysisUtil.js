@@ -8,7 +8,7 @@ exports.Analysis = async (accident) => {
         messages: [{
             role: "system",
             content: `"you are a ai asistant which accepts the accidents data in JSON in 500m of the loacation,you are trained in giving three outputs"
-                      "First an analysis of a accidents"
+                      "First an analysis of a accidents (all the values in average)"
                       "Second the possible factors that may have caused the Accident"
                       "And third the COUNTERMEASURES that can be taken to avoid the accident and make this section long and detailed (more than 100 words) "
                       "Dont ask for any input from user"
